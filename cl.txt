@@ -1,0 +1,234 @@
+import React, { Component } from 'react';
+import { StyleSheet, SafeAreaView, ScrollView, View, Image, TextInput, TouchableOpacity, Text  } from 'react-native';
+
+export default class LoginVew extends Component{
+	
+	state = {
+		userName: "",
+		password: "",
+		isValid: true,
+		errors: [],
+		response: ""
+	};
+
+	setUserName = (name, val) => {
+		this.setState({
+			userName: val
+		})
+	};
+
+	setPassword = (name, val) => {
+		this.setState({
+			password: val
+		})
+	}
+
+	inputValidation = async () => { 
+		if(this.state.isValid){
+
+			try{
+				let response = await fetch('https://k9.paragraf.rs/api/login', {
+					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						// username: jovana.test117@paragraf.rs password:paragraf
+						username: this.state.userName,
+						password: this.state.password
+					})
+				});
+
+				let responseJson = await response.json();
+				if(responseJson.status === "success"){
+					console.log(responseJson.data.token);
+				} else {
+					console.log('bye');
+				}
+			} catch(error) {
+				console.log('error: ' + error);
+			}
+
+		}
+	};
+
+	registrationTransfer = () => {
+		alert("Welcome new user");
+	};
+
+	render() {
+		let logo = {uri: "https://kancelarko.rs/img/logo/adro-logo-index.png"};
+		return (
+			<SafeAreaView style={styles.body}>
+				<ScrollView style={styles.scrollContainer}>
+					<View style={styles.logoContainer}>
+						<Image source={logo} style={ styles.logo }/>
+					</View>
+					<View style={styles.textContainer}>
+						<TextInput placeholder="Korisničko ime (email)" style={styles.inputFields} onChangeText={ (val) => this.setUserName('userName', val)}/>
+						<TextInput placeholder="Lozinka" secureTextEntry={true} style={styles.inputFields} onChangeText={ (val) => this.setPassword('password', val)}/>
+					</View>
+					<View style={styles.buttonContainer}>
+						<TouchableOpacity onPress={this.inputValidation}>
+							<View>
+								<Text style={styles.buttonApp}>
+									Prijavite se
+								</Text>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={this.registrationTransfer}>
+							<View>
+								<Text style={styles.buttonReg}>
+									Registrujte se
+								</Text>
+							</View>
+						</TouchableOpacity>
+					</View>
+				</ScrollView>
+			</SafeAreaView>
+		);
+	};	
+}
+
+const styles = StyleSheet.create({
+	body:{
+		flex:1,
+		alignItems: 'center',
+	},
+	scrollContainer:{
+		width: "100%"
+	},
+	logoContainer:{
+		
+		alignItems: 'center',
+	},
+	textContainer:{
+		
+		alignItems: 'center',
+	},
+	buttonContainer:{
+		
+		alignItems: 'center',
+	},
+	inputFields: {
+		width:300,
+		height:40,
+		borderColor: '#d2d2d2',
+		borderWidth: 1,
+		borderRadius: 20,
+		marginBottom:20,
+		paddingLeft:20
+	},
+    logo: {
+		width:300, 
+		height:150, 
+		marginTop:50
+	},
+	buttonApp: {
+		width:300,
+		height:40,
+		color: 'white',
+		backgroundColor: '#36a3f7',
+		borderColor: '#d2d2d2',
+		borderWidth: 1,
+		borderRadius:20,
+		marginBottom:20,
+		paddingLeft:20,
+		paddingRight: 20,
+		padding: 12,
+		textAlign:'center',
+	},
+	buttonReg: {
+		width:300,
+		height:40,
+		color: 'white',
+		backgroundColor: '#30a953',
+		borderColor: '#d2d2d2',
+		borderWidth: 1,
+		borderRadius:20,
+		marginBottom:20,
+		paddingLeft:20,
+		paddingRight: 20,
+		padding: 12,
+		textAlign:'center',
+	}
+});
+
+
+
+
+
+
+import React, { Component } from 'react';
+import { StyleSheet, View,  Text, TextInput, Button  } from 'react-native';
+
+export default class App extends Component{
+
+	state = {
+		placeName: "",
+		places: []
+	};
+
+	placeNameChangedHandler = val => {
+		this.setState({
+			placeName: val,
+		});
+	};
+
+	placeSubmitHandler = () => {
+		if(this.state.placeName.trim() === "") {
+			return;
+		}
+
+		this.setState( prevState => {
+			console.log(prevState.places.concat(prevState.placeName));
+			return {
+				places: prevState.places.concat(prevState.placeName)
+			}
+		});
+	};
+
+	render() {
+		return (
+			<View style={styles.container}>
+				<View style={styles.inputContainer}>
+					<TextInput 
+					style={styles.inputPlaceName}
+					placeholder="An awsome place..."
+					value={this.state.placeName}
+					onChangeText={this.placeNameChangedHandler}
+					/>
+					<Button 
+					title="+ Add" 
+					style={styles.inputButton}
+					onPress={input.placeSubmitHandler}
+					/>
+				</View>
+			</View>
+		);
+	};	
+}
+
+const styles = StyleSheet.create({
+	container:{
+		flex:1,
+		backgroundColor: '#fff',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		padding: 20
+	},
+	inputContainer:{
+		width: "100%",
+		flexDirection: "row",
+		justifyContent: "space-between",
+	},
+	inputPlaceName: {
+		width: "70%",
+		borderBottomColor: "#23ab85",
+		borderBottomWidth: 2
+	},
+	inputButton: {
+		width: "30%",
+	}
+});
