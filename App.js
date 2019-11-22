@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View,  Text, TextInput, Button  } from 'react-native';
 
+//Components
+import ListItem from './src/components/ListItem/ListItem';
+import InputPlace from './src/components/InputPlace/InputPlace';
+
 export default class App extends Component{
 
 	state = {
@@ -8,44 +12,14 @@ export default class App extends Component{
 		places: []
 	};
 
-	placeNameChangedHandler = val => {
-		this.setState({
-			placeName: val,
-		});
-	};
-
-	placeSubmitHandler = () => {
-		if(this.state.placeName.trim() === "") {
-			return;
-		}
-
-		this.setState( prevState => {
-			return {
-				places: prevState.places.concat(prevState.placeName)
-			}
-		});
-	};
-
 	render() {
 		const placesOutput = this.state.places.map((place, i) => (
-			<Text key={i}>{place}</Text>
+			<ListItem key={i} placeName={place}/>
 		));
 		return (
 			<View style={styles.container}>
-				<View style={styles.inputContainer}>
-					<TextInput 
-					style={styles.inputPlaceName}
-					placeholder="An awsome place..."
-					value={this.state.placeName}
-					onChangeText={this.placeNameChangedHandler}
-					/>
-					<Button 
-					title="+ Add" 
-					style={styles.inputButton}
-					onPress={this.placeSubmitHandler}
-					/>
-				</View>
-				<View>{placesOutput}</View>
+				<InputPlace state={this.state}/>
+				<View style={styles.listContainer}>{placesOutput}</View>
 			</View>
 		);
 	};	
@@ -59,17 +33,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		padding: 20
 	},
-	inputContainer:{
+	listContainer: {
 		width: "100%",
-		flexDirection: "row",
-		justifyContent: "space-between",
-	},
-	inputPlaceName: {
-		width: "70%",
-		borderBottomColor: "#23ab85",
-		borderBottomWidth: 2
-	},
-	inputButton: {
-		width: "30%",
 	}
 });
